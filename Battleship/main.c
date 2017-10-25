@@ -3,6 +3,8 @@
 #include <string.h>
 #include <time.h>
 
+#define CHARBOAT 0x23
+
 enum GAMETYPE
 {
 	IA,
@@ -92,7 +94,7 @@ void printIAMap()
 {
 	system("clear");
 	puts("   0 1 2 3 4 5 6 7 8 9 ");
-	puts(" |---------------------|");
+	puts("  |---------------------|");
 	for(int i = 0; i < 10; i++)
 	{
 		printf("%d| ", i);
@@ -100,7 +102,7 @@ void printIAMap()
 			printf("%c ", IAmap[i][j]);
 		puts("|");
 	}
-	puts(" |---------------------|\n");
+	puts("  |---------------------|\n");
 }
 
 void printPlayMap()
@@ -181,7 +183,7 @@ void setupIA()
 		{
 			for(int j = 0; j < SIZE[i]; j++)
 			{
-				if(IAmap[y][x+j] == 0x42)
+				if(IAmap[y][x+j] == CHARBOAT)
 				{
 					i--;
 					break;
@@ -189,14 +191,14 @@ void setupIA()
 			}
 			for(int j = 0; j < SIZE[i]; j++)
 			{
-				IAmap[y][x+j] = 0x42;
+				IAmap[y][x+j] = CHARBOAT;
 			}
 		}
 		else
 		{
 			for(int j = 0; j < SIZE[i]; j++)
 			{
-				if(IAmap[y+j][x] == 0x42)
+				if(IAmap[y+j][x] == CHARBOAT)
 				{
 					i--;
 					break;
@@ -204,7 +206,7 @@ void setupIA()
 			}
 			for(int j = 0; j < SIZE[i]; j++)
 			{
-				IAmap[y+j][x] = 0x42;
+				IAmap[y+j][x] = CHARBOAT;
 			}
 		}
 	}
@@ -240,7 +242,7 @@ void placing()
 		{
 			for(int j = 0; j < SIZE[i]; j++)
 			{
-				if(map[y][x+j] == 0x42)
+				if(map[y][x+j] == CHARBOAT)
 				{
 					puts("Boat already here !");
 					i--;
@@ -249,14 +251,14 @@ void placing()
 			}
 			for(int j = 0; j < SIZE[i]; j++)
 			{
-				map[y][x+j] = 0x42;
+				map[y][x+j] = CHARBOAT;
 			}
 		}
 		else
 		{
 			for(int j = 0; j < SIZE[i]; j++)
 			{
-				if(map[y+j][x] == 0x42)
+				if(map[y+j][x] == CHARBOAT)
 				{
 					puts("Boat already here !");
 					i--;
@@ -265,7 +267,7 @@ void placing()
 			}
 			for(int j = 0; j < SIZE[i]; j++)
 			{
-				map[y+j][x] = 0x42;
+				map[y+j][x] = CHARBOAT;
 			}
 		}
 	}
@@ -295,7 +297,7 @@ void shooting()
 		y = atoi(splited[1]);
 	} while(x > 9 || y > 9);
 
-	if (IAmap[y][x] == 0x42)
+	if (IAmap[y][x] == CHARBOAT)
 		touchMap[y][x] = 0x58;
 	else if(IAmap[y][x] == 0x30)
 		touchMap[y][x] = 0x70;
@@ -313,7 +315,7 @@ void IAplay()
 	int x = rand()%10;
 	int y = rand()%10;
 
-	if (map[y][x] == 0x42)
+	if (map[y][x] == CHARBOAT)
 		IAtouchMap[y][x] = 0x58;
 	else if(map[y][x] == 0x30)
 		IAtouchMap[y][x] = 0x70;
