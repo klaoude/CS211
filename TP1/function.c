@@ -1,5 +1,14 @@
 #include "function.h"
 
+Pixel fgetPixel(FILE* file)
+{
+	Pixel ret;
+	ret.R = fgetc(file);
+	ret.G = fgetc(file);
+	ret.B = fgetc(file);
+	return ret;
+}
+
 int intFromFile(FILE* file)
 {
 	unsigned char tmp[4];
@@ -21,14 +30,14 @@ short shortFromFile(FILE* file)
 void printHeader(fichierEntete header)
 {
 	puts("-----HEADER-----");
-	printf("Signature : %x\nTaille : %x\nReserve : %x\nOffset : %x\n", header.signature, header.tailleFichier, header.reserve, header.offset);
+	printf("Signature : 0x%08x\nTaille : 0x%08x\nReserve : 0x%08x\nOffset : 0x%08x\n", header.signature, header.tailleFichier, header.reserve, header.offset);
 	puts("----------------\n");
 }
 
 void printDIB(imageEntete DIB)
 {
 	puts("------DIB------");
-	printf("DIB header size : %x\nImage Width : %x\nImage Height : %x\nPlanes : %x\nBits per pixel : %x\nCompression : %x\nImage size : %x\nX pixel per Meter : %x\nY pixel per Meter : %x\nColor in colorTable : %x\nImportant color count  : %x\n", 
+	printf("DIB header size : 0x%08x\nImage Width : 0x%08x\nImage Height : 0x%08x\nPlanes : 0x%08x\nBits per pixel : 0x%08x\nCompression : 0x%08x\nImage size : 0x%08x\nX pixel per Meter : 0x%08x\nY pixel per Meter : 0x%08x\nColor in colorTable : 0x%08x\nImportant color count  : 0x%08x\n", 
 			DIB.tailleEntete, DIB.largeur, DIB.hauteur, DIB.plan, DIB.profondeur, DIB.compression, 
 			DIB.tailleImage, DIB.resolutionHorizontale, DIB.resolutionVerticale, DIB.nombreCouleurs, 
 			DIB.nombreCouleursImportantes);
@@ -70,24 +79,4 @@ BMP fileToStruct(FILE* file)
 	bmp.DIB = DIB;
 
 	return bmp;
-}
-
-char* stringcat(char* str1, char* str2)
-{
-	char* ret = malloc(strlen(str1) + strlen(str2) + 1);
-	strcpy(ret, str1);
-	strcat(ret, str2);
-	return ret;
-}
-
-FILE* getModifiedFile(char* path)
-{
-	//building "sed 's/\xFF/\xFD/g' " + path  + " > temp"
-	char* cmd = stringcat(stringcat("sed 's/\xFF/\xFD/g' ", path), " > temp");
-
-	system(cmd);
-	
-	free(cmd);
-	
-	return fopen("temp", "r");
 }

@@ -6,6 +6,13 @@
 
 #include "bitmap.h"
 
+typedef struct 
+{
+	char R;
+	char G;
+	char B;
+} Pixel;
+
 typedef struct BMP {
 	fichierEntete header;
 	imageEntete DIB;

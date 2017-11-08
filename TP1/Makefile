@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -g
+CFLAGS = -std=c99 -Wall -g
 LDFLAGS = -lm
 EXEC = TP1
 

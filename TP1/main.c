@@ -1,9 +1,13 @@
 #include "function.h"
 
+//Utilisation, 	./TP1 1 pour l'exo 1
+//				./TP1 2 pour l'exo 2
+// 				./TP1 mask [source] [origin] [dest] pour le masquage
+
 void exo1()
 {
-	FILE* transporteur = fopen("transporteur.txt", "r");
-	FILE* origin = fopen("original", "w");
+	FILE* transporteur = fopen("transporteur.txt", "rb");
+	FILE* origin = fopen("original", "wb");
 
 	if(transporteur == NULL) exit(1);
 
@@ -11,13 +15,13 @@ void exo1()
 
 	char currChar;
 	unsigned char i = 0;
-	unsigned char decoded = 0;
+	unsigned char buffer = 0;
 	do
 	{
 		if(i > 7)
 		{
-			fputc(decoded, origin);
-			decoded = 0;
+			fputc(buffer, origin);
+			buffer = 0;
 			i = 0;		
 		}
 
@@ -27,7 +31,7 @@ void exo1()
 		{
 			if(isupper(currChar))
 			{
-				decoded += pow(2, 7-i);
+				buffer += pow(2, 7-i);
 			}
 			i++;
 		}
@@ -39,75 +43,103 @@ void exo1()
 
 void exo2()
 {
-	FILE* inputFile = getModifiedFile("transporteur.bmp");
+	//FILE* inputFile = getModifiedFile("transporteur.bmp");
+	FILE* inputFile = fopen("transporteur.bmp", "rb");
 	if(inputFile == NULL) exit(1);
 
-	FILE* output = fopen("out.txt", "w");
+	FILE* output = fopen("out.jpg", "wb");
 	if(output == NULL) exit(2);
+
+	fseek(inputFile, 0, SEEK_END);
+	int size = ftell(inputFile);
+	fseek(inputFile, 0, SEEK_SET); //J'utilise la size plutot que l'EOF car si dans notre fichier on a un byte a 0xFF, il sera considéré comme un EOF !
+	printf("%d\n", size);
 
 	char currChar;
 	unsigned char i = 0;
-	unsigned char decoded = 0;
+	unsigned char buffer = 0;
 
 	BMP info = fileToStruct(inputFile);
 
-	do
+	printBMP(info);
+
+	for(int j = 0; j < size - 0x36; j++) //offset de 0x36, taille de l'header
 	{
 		currChar = fgetc(inputFile);
 
 		if(i > 7)
 		{
-			fputc(decoded, output);
-			decoded = 0;
+			fputc(buffer, output);
+			buffer = 0;
 			i = 0;		
 		}
 
-		decoded += (currChar&1)*pow(2, 7-i);
+		buffer += (currChar&1)*pow(2, 7-i);
 
 		i++;
-
-	} while(currChar != EOF);
+	}
 
 	puts("Hey, Richard Stallman is cool !!!");
-
-	system("rm temp");
 
 	if(fclose(inputFile)) exit(3);
 	if(fclose(output)) exit(4);
 }
 
-void masquage(FILE* source, FILE* originel, FILE* dest)
+void masquage(char* sourcePath, char* originelPath, char* destPath)
 {
+	FILE* source = fopen(sourcePath, "rb");
+	FILE* originel = fopen(originelPath, "rb");
+	FILE* dest = fopen(destPath, "wb");
+
 	if(source == NULL) exit(1);
 	if(originel == NULL) exit(2);
 	if(dest == NULL) exit(5);
+
+	int sourceSize, originelSize;
+
+	//calcul de taille des fichiers
+	fseek(source, 0, SEEK_END);
+	fseek(originel, 0, SEEK_END);
+	sourceSize = ftell(source);
+	originelSize = ftell(originel);
+	fseek(source, 0, SEEK_SET);
+	fseek(originel, 0, SEEK_SET);
+
+	if(sourceSize != originelSize)
+	{
+		printf("Erreur de masquage, sourceSize != originelSize !!\n");
+		exit(42);
+	}
+
+	printf("Masking %s in %s.\n", sourcePath, destPath);
 
 	//copy les même 0x36 premier bytes
 	for(int i = 0; i < 0x36; i++)
 		fputc(fgetc(originel), dest);
 
 	char toEncode;
-
 	//on chiffre
-	do
+	for(int j = 0; j < sourceSize; j++)
 	{
 		toEncode = fgetc(source);
+		printf("Encoding 0x%02x\n", toEncode);
 		for(int i = 0; i < 8; i++)
-		{
-			char org = fgetc(originel);
-			char bit = toEncode & ((int)pow(2, 7-i));
-			if((org & 1) != bit)
-				fputc(org+1, dest);
+		{			
+			unsigned char org = fgetc(originel);
+			unsigned char bit = (toEncode>>i)&1;
+			if(org == 0xff && bit == 1)
+				fputc(0xfe, dest);
+			else
+			{
+				if((org & 1) == bit)
+					fputc(org+1, dest);
+				else
+					fputc(org, dest);
+			}			
 		}
+	}
 
-	} while(toEncode != EOF);
-
-	//on copy les même dernier bytes une fois que notre fichier source est encodé
-	do
-	{
-		toEncode = fgetc(originel);
-		fputc(toEncode, dest);
-	} while(toEncode != EOF);
+	printf("Done !\n");
 
 	if(fclose(source)) exit(3);
 	if(fclose(originel)) exit(4);
@@ -122,12 +154,12 @@ int main(int argc, char** argv)
 			exo1();
 		else if(!strcmp(argv[1], "2"))
 			exo2();
-		else if(argc > 3)
-			masquage(fopen(argv[1], "r"), fopen(argv[2], "r"), fopen(argv[3], "w"));
+		else if(argc > 3 && !strcmp(argv[1], "mask"))
+			masquage(argv[2], argv[3], argv[4]);
 	}
 	else
 	{
-		puts("Usage : ./TP1 [1/2/source] [[originel] [destination]]");
+		puts("Usage : ./TP1 [1/2/mask] [source] [origin] [dest]");
 	}
 	return 0;
 }
