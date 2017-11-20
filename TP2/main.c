@@ -141,7 +141,7 @@ int main(int argc, char** argv)
 			if(argCompteur == 4)
 			{
 				char* tab = malloc(atoi(inputTab[3]));
-				for(int i = 0; i < atoi(inputTab[3]))
+				for(int i = 0; i < atoi(inputTab[3]); i++)
 					tab[i] = inputTab[2];
 
 				creer_objet(inputTab[1], 10, atoi(inputTab[3]), tab);
