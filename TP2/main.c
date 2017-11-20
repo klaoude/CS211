@@ -9,7 +9,7 @@ void afficher_Objet()
 
 	do
 	{
-		printf("%s\n", tmp->nom);
+		printf("%d %d %s\n", tmp->auteur, tmp->taille, tmp->nom);
 		tmp = tmp->next;
 	} while(tmp != NULL);
 }
