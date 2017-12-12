@@ -1,4 +1,4 @@
-#include "fat.h"
+#include "fat.h" 
 
 void initialise_fat()
 {
@@ -32,18 +32,27 @@ Objet* creer_objet(char* nom, unsigned short auteur, unsigned int taille, char *
 	if(strlen(nom) >= NAMELEN)
 		return NULL;
 
+	if(nom == NULL)
+		return NULL;
+
+	if(rechercher_objet(nom) != NULL)
+		return NULL;
+
 	Objet* objet = malloc(sizeof(Objet));
 
-	objet->nom = nom;
+	objet->nom = malloc(strlen(nom)+1);
+	strcpy(objet->nom, nom);
 	objet->auteur = auteur;
 	objet->taille = taille;
 	objet->next = NULL;
 
-	unsigned int nbBlocUsed = taille / BLOCSIZE + 1;
+	unsigned int nbBlocUsed = taille / BLOCSIZE + 1; //nb de bloc utilisé par le fichier
 	
-	unsigned int compteur = 0;
-	unsigned int old = 0, curr = 0, next = 0;
-	while(compteur != nbBlocUsed+1)
+	unsigned int compteur = 0; //conte le nombre de bloc traversé
+	unsigned int old = 0; //bloc derierre le bloc courant
+	unsigned int curr = 0; //current cut index
+	unsigned int next = 0;
+	while(compteur != nbBlocUsed + 1)
 	{
 		//find first freeblock
 		for(int i = old; i < BLOCNUM; i++)
@@ -62,8 +71,13 @@ Objet* creer_objet(char* nom, unsigned short auteur, unsigned int taille, char *
 		if(compteur == nbBlocUsed-1)
 		{
 			FAT[curr] = 0xfffe;
+			freeblocks--;
 			//copy data to volume
-			memcpy(volume + curr * 512, data, 512);
+			memcpy(volume + curr * 512, 
+					data, 
+					taille - (nbBlocUsed-1)*512);
+			*(volume + curr*512 + taille - (nbBlocUsed-1)*512 + 1) = 0x00;
+			
 			data = data+512;
 			compteur = nbBlocUsed+1;
 			break;
@@ -81,6 +95,8 @@ Objet* creer_objet(char* nom, unsigned short auteur, unsigned int taille, char *
 
 		//curr point to next
 		FAT[curr] = next;
+
+		freeblocks--;
 
 		//copy data to volume
 		memcpy(volume + curr * 512, data, 512);
@@ -117,26 +133,47 @@ int supprimer_objet(char *nom)
 	Objet* prev;
 	unsigned short ind;
 
-	while(tmp != NULL)
+	if(tmp->next == NULL && strcmp(tmp->nom, nom) == 0)
 	{
-		prev = tmp;
-		if(strcmp(tmp->nom, nom) == 0)
+		ind = tmp->index;
+		obj = NULL;
+		for(int i = 0; i < tmp->taille / BLOCSIZE + 1; i++)
 		{
-			Objet* suiv = tmp->next; 
-			tmp->next = NULL;
-			ind = tmp->index;
+			int next = FAT[ind];
+			FAT[ind] = 0xffff;
+			freeblocks++;
+			if(next == 0xfffe)
+				break;
+			ind = next;
+		}
 
-			for(int i = 0; i < tmp->taille / BLOCSIZE + 1; i++)
+		free(tmp);
+
+		return 0;
+	}
+
+	while(tmp->next != NULL)
+	{
+		if(strcmp(tmp->next->nom, nom) == 0)
+		{
+			prev = tmp;
+			//surpime l'elements du milieu et link le precedent vers le suivant
+			Objet* suiv = tmp->next->next; 
+			prev->next = suiv;
+			ind = tmp->next->index;
+
+			//on libére les bloc FAT
+			for(int i = 0; i < tmp->next->taille / BLOCSIZE + 1; i++)
 			{
 				int next = FAT[ind];
 				FAT[ind] = 0xffff;
+				freeblocks++;
 				if(next == 0xfffe)
 					break;
 				ind = next;
 			}
 
-			obj = suiv;
-			free(tmp);
+			free(tmp->next);
 
 			return 0;
 		}
@@ -160,11 +197,13 @@ int lire_objet(Objet* o, char** data)
 		return -1;
 
 	int index = o->index;
-	*data = malloc(o->taille);
+	*data = malloc(o->taille+1);
 
 	for(int i = 0; i < o->taille / BLOCSIZE + 1; i++)
 	{
-		memcpy((*data) + i * BLOCSIZE, volume + BLOCSIZE * index, o->taille < BLOCSIZE ? o->taille : BLOCSIZE);
+		memcpy((*data) + i * BLOCSIZE, 
+				volume + BLOCSIZE * index, 
+				o->taille < BLOCSIZE ? o->taille : BLOCSIZE);
 		if(index == 0xfffe)
 			break;
 		index = FAT[index];

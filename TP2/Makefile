@@ -1,17 +1,20 @@
 CC = gcc
 CFLAGS = -std=c99 -g
-LDFLAGS = -lm
-EXEC = TP2
+LDFLAGS = 
+EXEC = TP2 
 
 all: $(EXEC)
 
-$(EXEC): main.o fat.o
-	$(CC) -o $(EXEC) fat.o main.o $(LDFLAGS)
+$(EXEC): main.o  fat.o term.o
+	$(CC) -o $(EXEC) fat.o main.o term.o $(LDFLAGS)
 
 fat.o : fat.c
 	$(CC) -o fat.o -c fat.c $(CFLAGS)
 
-main.o : main.c fat.h
+term.o : term.c
+	$(CC) -o term.o -c term.c $(CFLAGS)
+
+main.o : main.c fat.h term.h
 	$(CC) -o main.o -c main.c $(CFLAGS)
 
 clean:

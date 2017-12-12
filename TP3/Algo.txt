@@ -1,0 +1,52 @@
+vStack est une pile
+opStack est une pile
+
+ExecuteOperation:
+
+leftValue = vStack.pop()
+rightValue = vStack.pop()
+operateur = opStack.pop()
+si operateur == / && rightValue == 0
+	return 1
+Selon operateur
+	Cas +
+		result = left + right
+	Cas -
+		result = left - right
+	Cas *
+		result = left * right
+	Cas /
+		result = left / right
+
+vStack.push(result)
+
+CalculString :
+
+Pour i de 0 a taille de l'expression
+	si 0<=expression[i]<=9 || A<=expression[i]<=F
+		vStack.push(expression[i])
+	sinon
+		Tant que (opStack != NULL && (op == + || op == - || opStack->val == * || opStack->val == /))
+			si ExecuteOperation() == 1
+				return MAX
+		opStack.push(expression[i])
+
+score = vStack.pop()
+
+Calcul:
+
+code[]="+-*/"
+alph[] = "0123456789ABCDEF";
+
+Pour i de 0 a NBGENE - 1
+	si i%2 == 1
+		expr[i] = code[gene[i/2]&0xf % 4]
+	sinon
+		expr[i] = alph[gene[i/2] >> 4]
+
+
+s = calcString(expr)
+si s == MAX
+	score = MAX
+sinon
+	score = |s - 666|

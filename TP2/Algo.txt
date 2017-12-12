@@ -1,0 +1,25 @@
+initialise_fat :
+	met tous les blocs de fat a 0xffff
+	met freeblock a BLOCNUM
+	met obj a NULL
+
+recherche_objet:
+	On parcourt tous les objets de la liste chainée
+	si le nom d'un objet a le meme que le nom en argument on return cet objet
+	si aucun objet n'a été trouvé, on return NULL
+
+creer_objet:
+	on crée un nouvel objet dans la liste chainée
+	on cherche des blocs libres dans FAT et on les link ensemble
+	on met les data dans le tableau volume en fonction de leur place dans le fat
+
+supprimer_objet:
+	on cherche l'objet qui a le même nom que celui passé en argument
+	on link l'objet precedent à l'objet suivant
+	on free l'objet
+
+supprimer_tout:
+	supprime tous les objets
+
+lire_objet:
+	on met dans data les data correspondantntes à l'objet depuis la variable volume en fonction du FAT
