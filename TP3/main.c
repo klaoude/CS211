@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h> 
 #include <unistd.h> 
+#include <getopt.h>
 
 #include "AlgoGenetique.h" 
 
@@ -15,16 +16,16 @@ int main(int argc, char *argv[])
 	// les valeurs par defaut. 	
 	population.nombre=NBPOPULATION; 
 	parents.nombre=NBPARENTS; 
-	
+
  	while ((opt = getopt(argc, argv, "p:P:")) != -1) 
 	{
 	    switch (opt) 
 	    {
 			case 'p':
-				population.nombre=atoi(opt);
+				population.nombre=atoi(optarg);
 				break;
 			case 'P':
-				parents.nombre = atoi(opt);
+				parents.nombre = atoi(optarg);
 				break;
 			default:
 				fprintf(stderr, "Usage: %s [-p nbpopulation] [-P nbparents] \n",argv[0]);
@@ -53,7 +54,9 @@ int main(int argc, char *argv[])
 		nbgeneration++;
 	}
 
-	printf("Generation %d\n",nbgeneration);
+	printf("Generation Final :  %d\n",nbgeneration);
 	free(population.membres); 
 	free(parents.membres); 
+
+	return 0;
 }

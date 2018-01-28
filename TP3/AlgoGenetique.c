@@ -196,7 +196,7 @@ void selection(groupe *population, groupe *parents)
 				parents->membres[k] = population->membres[j];
 				k++;
 			}
-			if(k >= NBPARENTS)
+			if(k >= parents->nombre)
 				return;
 		}
 	}

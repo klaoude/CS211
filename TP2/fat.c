@@ -129,28 +129,28 @@ int supprimer_objet(char *nom)
 	if(obj == NULL)
 		return -1;
 
-	Objet* tmp = obj;
-	Objet* prev;
-	unsigned short ind;
+		Objet* tmp = obj;
+		Objet* prev;
+		unsigned short ind;
 
-	if(tmp->next == NULL && strcmp(tmp->nom, nom) == 0)
-	{
-		ind = tmp->index;
-		obj = NULL;
-		for(int i = 0; i < tmp->taille / BLOCSIZE + 1; i++)
+		if(tmp->next == NULL && strcmp(tmp->nom, nom) == 0)
 		{
-			int next = FAT[ind];
-			FAT[ind] = 0xffff;
-			freeblocks++;
-			if(next == 0xfffe)
-				break;
-			ind = next;
+			ind = tmp->index;
+			obj = NULL;
+			for(int i = 0; i < tmp->taille / BLOCSIZE + 1; i++)
+			{
+				int next = FAT[ind];
+				FAT[ind] = 0xffff;
+				freeblocks++;
+				if(next == 0xfffe)
+					break;
+				ind = next;
+			}
+
+			free(tmp);
+
+			return 0;
 		}
-
-		free(tmp);
-
-		return 0;
-	}
 
 	while(tmp->next != NULL)
 	{
