@@ -8,7 +8,7 @@ all: $(EXEC)
 $(EXEC): fonctions.o main.o
 	$(CC) -o $(EXEC) fonctions.o main.o $(LDFLAGS)
 
-fonctions.o :
+fonctions.o : fonctions.h
 	$(CC) -o fonctions.o -c fonctions.c $(CFLAGS)
 
 main.o : main.c fonctions.c

@@ -1,0 +1,57 @@
+Partie 1 : BubbleSort
+
+5)
+tab 1 = 2303
+tab 2 = 2450
+tab 3 = 1617
+
+6)
+Meilleur des cas : O(n)
+Pire des cas : O(n²)
+
+Cette algorithme est adaptatif car la complexité du meilleur des cas est plus
+rapide que la complexité du pire des cas.
+
+7)
+Complexité spatiale : O(1)
+Oui cette algorithme est stable.
+
+
+Partie 2 : InsertionSort
+
+2)
+tab1 : 1227
+tab2 : 1323
+tab3 : 929
+
+3)
+Meilleur des cas : O(n)
+Pire des cas : O(n²) ~ O(n(n-1)/2)
+
+Cette algorithme est adaptatif car la complexité du meilleur des cas est plus
+rapide que la complexité du pire des cas.
+
+4)
+Complexité spatiale : O(1)
+Oui cette algorithme est stable.
+
+Partie 3 : MergeSort
+
+1)
+int* tmp = tab; // tmp = l'addresse de tab
+int tmp[n]; n'est pas possible en C
+
+2)
+int* tmp = malloc(n * sizeof(int));
+
+5)
+tab1 : 1307
+tab2 : 1317
+tab3 : 1297
+
+6)
+Complexité temporelle : O(n²)
+
+7)
+Complexité Spatial : O(n)
+Oui cette algorithme est stable.
