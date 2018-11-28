@@ -12,13 +12,13 @@ int main()
 
 	int n = sizeof(ref)/sizeof(int);
 
-	printf("mergeSort : %d\n", mergeSort(tab1, n));
-	printf("mergeSort : %d\n", mergeSort(tab2, n));
-	printf("mergeSort : %d\n", mergeSort(tab3, n));
+	printf("BubbleSort : %d\n", BubbleSort(tab1, n, asc));
+	printf("BubbleSort : %d\n", BubbleSort(tab2, n, desc));
+	printf("BubbleSort : %d\n", BubbleSort(tab3, n, desc));
 
-	compare(tab1, ref, n);
-	compare(tab2, ref, n);
-	compare(tab3, ref, n);
+	affiche(tab1, n);
+	affiche(tab2, n);
+	affiche(tab3, n);
 
 	return 0;
 }

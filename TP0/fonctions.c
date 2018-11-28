@@ -31,7 +31,7 @@ void swap(int* a, int* b)
 	*b = tmp;
 }
 
-int BubbleSort(int* tab, int n)
+int BubbleSort(int* tab, int n, unsigned char (*func)(int, int))
 {
 	int ret = 0;
 	int swapNum = 1;
@@ -41,7 +41,7 @@ int BubbleSort(int* tab, int n)
 		for(int i = 0; i < n - 1; i++)
 		{
 			ret++;
-			if(tab[i] > tab[i+1])
+			if(func(tab[i], tab[i+1]))
 			{
 				swap(tab + i, tab + i + 1);
 				swapNum++;
@@ -143,3 +143,6 @@ int mergeSort(int* tab, int n)
 
 	return cntr;
 }
+
+unsigned char asc(int a, int b) { return a > b; }
+unsigned char desc(int a, int b) { return a < b; }
