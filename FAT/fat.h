@@ -1,26 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #define BLOCSIZE 512
 #define BLOCNUM 1024
 #define NAMELEN 256
 
 #define FREE 0xffff
+#define LAST_BLOC 0xfffe
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-typedef struct Objet
+typedef struct objet
 {
 	char* nom;
 	unsigned int taille;
 	unsigned short auteur;
 	unsigned short index;
-	struct Objet *next;
+	struct objet *next;
 } Objet;
 
-Objet* obj;
-char volume[BLOCSIZE * BLOCNUM];
+struct objet *obj  ;
+char volume[BLOCSIZE * BLOCNUM ];
 unsigned short FAT[BLOCNUM];
 unsigned short freeblocks;
+
 
 /**
 \brief Cette fonction permet :
@@ -29,6 +31,7 @@ D'initialiser la variable freeblocks à BLOCNUM.
 D'initialiser la variable obj
 */
 void initialise_fat();
+
 
 /**
 \brief Cette fonction permet de rechercher un objet par son nom dans la liste chaînée décrivant les objets
@@ -46,7 +49,7 @@ mettre à jour la variable freeblocks
 \param taille la taille de l'objet 
 \param data les données à copier
 */
-Objet* creer_objet(char *nom, unsigned short auteur, unsigned int taille, char *data);
+Objet* creer_objet(char *nom, unsigned short auteur,unsigned int taille, char *data);
 
 /**
 \brief  Cette fonction permet de supprimer un objet trouvé par son nom, de libérer les blocs dans le tableau FAT, et de mettre à jour la variable freeblocks 
@@ -54,6 +57,7 @@ Objet* creer_objet(char *nom, unsigned short auteur, unsigned int taille, char *
 \return -1 si erreur, 0 sinon.
 */
 int supprimer_objet(char *nom);
+
 
 /** 
 \brief Cette fonction permet :
@@ -70,4 +74,6 @@ Attention à la taille !!!!!!!!!!!!!!
 \param nom nom de l'objet
 \return -1 si erreur, 0 sinon.
 */
-int lire_objet(Objet* o, char** data);
+
+int lire_objet(Objet* o,char **data);
+

@@ -57,7 +57,7 @@ Objet* creer_objet(char* nom, unsigned short auteur, unsigned int taille, char *
 		//find first freeblock
 		for(int i = old; i < BLOCNUM; i++)
 		{
-			if(FAT[i] == 0xffff)
+			if(FAT[i] == FREE)
 			{
 				curr = i;
 				break;
@@ -86,7 +86,7 @@ Objet* creer_objet(char* nom, unsigned short auteur, unsigned int taille, char *
 		//find second next free
 		for(int i = curr+1; i < BLOCNUM; i++)
 		{
-			if(FAT[i] == 0xffff)
+			if(FAT[i] == FREE)
 			{
 				next = i;
 				break;
@@ -119,6 +119,11 @@ Objet* creer_objet(char* nom, unsigned short auteur, unsigned int taille, char *
 	}
 
 	return NULL;
+}
+
+void free_FAT(unsigned short index, )
+{
+
 }
 
 int supprimer_objet(char *nom)
@@ -157,7 +162,7 @@ int supprimer_objet(char *nom)
 		if(strcmp(tmp->next->nom, nom) == 0)
 		{
 			prev = tmp;
-			//surpime l'elements du milieu et link le precedent vers le suivant
+			//surppime l'elements du milieu et link le precedent vers le suivant
 			Objet* suiv = tmp->next->next; 
 			prev->next = suiv;
 			ind = tmp->next->index;
